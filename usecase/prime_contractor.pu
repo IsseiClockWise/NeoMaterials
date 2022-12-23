@@ -1,0 +1,17 @@
+@startuml 元請企業
+
+left to right direction
+skinparam actorStyle awesome
+skinparam actor {
+    BackgroundColor #333333
+    BorderColor #999999
+}
+actor 元請企業 as prime_contractor
+
+rectangle ChipsNeoSystem {
+    usecase "元請管理" as prime
+}
+
+prime_contractor --> prime
+prime --> prime_contractor :請求書情報
+@enduml

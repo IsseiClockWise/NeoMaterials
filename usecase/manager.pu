@@ -19,37 +19,40 @@ rectangle ChipsNeoSystem {
     usecase "単価管理" as unit_cost
     usecase "元請管理" as prime
     usecase "クルーシフト管理" as crew_shift
+    usecase "収支管理" as iae
 }
 
 database データベース as data
 
 data --> attendance :出勤情報
-manager --> attendance
+attendance --> manager
 
-manager --> type :シフト種別
-type --> data
+manager --> type
+type --> data :シフト種別
 
-manager --> charge :担当企業、場所
-charge --> data
+manager --> charge
+charge --> data :担当企業、場所
 
-manager --> individual :個建情報
-individual --> data
+manager --> individual
+individual --> data :個建情報
 
-manager --> crew_manage :クルー情報
-crew_manage --> data
+manager --> crew_manage
+crew_manage --> data :クルー情報
 crew_manage --> crew :アカウント情報
 
-manager --> unit_cost :単価情報
-unit_cost --> data
+manager --> unit_cost
+unit_cost --> data :単価情報
 
-manager --> prime :元請請求
-data --> prime :請求書情報
+manager --> prime
+data --> prime :元請請求書情報
 prime --> prime_contractor :元請請求書
 
 manager --> crew_shift
-crew_shift --> data
+crew_shift --> data :クルーシフト情報
 crew_shift --> crew :支払通知書
 crew --> manager :請求書
 
+data --> iae :収支情報
+iae --> manager
 
 @enduml

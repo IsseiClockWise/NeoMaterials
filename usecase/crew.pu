@@ -1,25 +1,3 @@
-# ChipsNeo
-## User
-- システム管理者（ClockWise様）
-- 販売代理店？（On And On、Asty様など）
-- シフトマネージャー（Asty様？）
-- クルー
-- 元請け企業（Amazon、佐川急便、、、）
-- Backup
-## UseCase
-- 販売代理店？（On And ONなど）
-  シフトマネージャーのアカウントを作成
-    一ヶ月無料のトライアル？
-  アカウントごとに機能割り当て
-    シフトのみだけ使う、請求書機能だけ使う、、、など
-
-- システム管理者
-  販売代理店のアカウントを作成
-  バックアップ
-  ヘルプデスク
-
-## UseCase Diagram
-
 @startuml クルー
 
 left to right direction
