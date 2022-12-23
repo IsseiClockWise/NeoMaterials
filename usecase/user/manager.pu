@@ -8,6 +8,7 @@ skinparam actor {
 }
 actor シフト管理者 as manager
 actor クルー as crew
+actor 元請企業 as prime_contractor
 
 rectangle ChipsNeoSystem {
     usecase "出勤管理" as attendance
@@ -16,19 +17,39 @@ rectangle ChipsNeoSystem {
     usecase "個建管理" as individual
     usecase "クルー管理" as crew_manage
     usecase "単価管理" as unit_cost
-    usecase "元請管理" as prime_contractor
+    usecase "元請管理" as prime
     usecase "クルーシフト管理" as crew_shift
 }
 
-manager --> attendance
-manager --> type :シフト種別
-manager --> charge :担当企業、場所
-manager --> individual :個建情報
-manager --> crew_manage :クルー情報
-manager --> unit_cost :単価情報
-manager --> prime_contractor :元請請求
-manager --> crew_shift
+database データベース as data
 
+data --> attendance :出勤情報
+manager --> attendance
+
+manager --> type :シフト種別
+type --> data
+
+manager --> charge :担当企業、場所
+charge --> data
+
+manager --> individual :個建情報
+individual --> data
+
+manager --> crew_manage :クルー情報
+crew_manage --> data
+crew_manage --> crew :アカウント情報
+
+manager --> unit_cost :単価情報
+unit_cost --> data
+
+manager --> prime :元請請求
+data --> prime :請求書情報
+prime --> prime_contractor :元請請求書
+
+manager --> crew_shift
+crew_shift --> data
+crew_shift --> crew :支払通知書
+crew --> manager :請求書
 
 
 @enduml
