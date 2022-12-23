@@ -1,0 +1,34 @@
+@startuml シフト管理者
+
+left to right direction
+skinparam actorStyle awesome
+skinparam actor {
+    BackgroundColor #333333
+    BorderColor #999999
+}
+actor シフト管理者 as manager
+actor クルー as crew
+
+rectangle ChipsNeoSystem {
+    usecase "出勤管理" as attendance
+    usecase "シフト種別管理" as type
+    usecase "担当管理" as charge
+    usecase "個建管理" as individual
+    usecase "クルー管理" as crew_manage
+    usecase "単価管理" as unit_cost
+    usecase "元請管理" as prime_contractor
+    usecase "クルーシフト管理" as crew_shift
+}
+
+manager --> attendance
+manager --> type :シフト種別
+manager --> charge :担当企業、場所
+manager --> individual :個建情報
+manager --> crew_manage :クルー情報
+manager --> unit_cost :単価情報
+manager --> prime_contractor :元請請求
+manager --> crew_shift
+
+
+
+@enduml

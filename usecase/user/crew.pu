@@ -1,0 +1,66 @@
+# ChipsNeo
+## User
+- システム管理者（ClockWise様）
+- 販売代理店？（On And On、Asty様など）
+- シフトマネージャー（Asty様？）
+- クルー
+- 元請け企業（Amazon、佐川急便、、、）
+- Backup
+## UseCase
+- 販売代理店？（On And ONなど）
+  シフトマネージャーのアカウントを作成
+    一ヶ月無料のトライアル？
+  アカウントごとに機能割り当て
+    シフトのみだけ使う、請求書機能だけ使う、、、など
+
+- システム管理者
+  販売代理店のアカウントを作成
+  バックアップ
+  ヘルプデスク
+
+## UseCase Diagram
+
+@startuml クルー
+
+left to right direction
+skinparam actorStyle awesome
+skinparam actor {
+    BackgroundColor #333333
+    BorderColor #999999
+}
+actor シフト管理者 as manager
+actor クルー as crew
+
+rectangle ChipsNeoSystem {
+    usecase "シフトの追加" as input_shift
+    usecase "確定送信" as submit
+    usecase "シフトの変更申請" as change
+    usecase "毎日の出退勤を入力" as time
+    usecase "請求書の作成" as invoice
+    usecase "支払い通知書の承認" as payment
+    usecase "配達実績の入力" as delivery
+}
+
+crew --> input_shift :出勤、退勤、メモ
+
+crew --> submit
+submit --> manager :シフト情報
+
+crew --> change :変更情報
+change --> manager :申請
+
+crew --> time :時間
+
+time --> submit
+input_shift --> submit
+
+manager -up-> payment :承認申請
+crew --> payment :承認
+
+crew --> invoice :自動作成
+invoice --> manager
+
+crew --> delivery :配達個数
+delivery --> submit
+
+@enduml

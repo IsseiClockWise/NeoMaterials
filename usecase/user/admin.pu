@@ -1,0 +1,40 @@
+@startuml システム管理者
+
+left to right direction
+skinparam actorStyle awesome
+skinparam actor {
+    BackgroundColor #333333
+    BorderColor #999999
+}
+actor システム管理者 as admin
+actor 販売代理店 as sales_agent
+actor 顧客 as client
+
+rectangle ChipsNeoSystem {
+    usecase "アカウント作成" as create
+    usecase "機能の追加" as add_feature
+    usecase "バックアップ" as backup
+    usecase "ヘルプデスク" as help_desk
+    usecase "不具合の修正" as fix
+    usecase "データの復元" as resque
+}
+
+admin --> create
+create --> sales_agent :販売店アカウント情報
+create --> client :顧客アカウント情報
+
+client --> backup :顧客データ
+admin --> resque
+resque --> backup
+backup --> client
+
+client --> sales_agent :新規追加機能の要望
+sales_agent -up-> admin :機能追加申請
+admin --> add_feature
+add_feature --> client :実装
+
+client --> help_desk :相談
+help_desk --> admin
+admin --> fix
+fix --> client :実装
+@enduml

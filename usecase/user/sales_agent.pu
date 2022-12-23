@@ -1,0 +1,24 @@
+@startuml 販売代理店
+
+left to right direction
+skinparam actorStyle awesome
+skinparam actor {
+    BackgroundColor #333333
+    BorderColor #999999
+}
+actor 販売代理店 as sales_agent
+actor シフト管理者 as manager
+
+rectangle ChipsNeoSystem {
+    usecase "シフト管理者のアカウント作成" as create
+    usecase "機能の割当" as feature
+}
+
+sales_agent --> create
+create -right-> manager :アカウント情報
+
+sales_agent --> feature
+feature --> manager :機能追加
+
+manager --> sales_agent :機能追加の要望
+@enduml
