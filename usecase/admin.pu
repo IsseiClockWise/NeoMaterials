@@ -11,9 +11,12 @@ actor 販売代理店 as sales_agent
 actor 顧客 as client
 
 rectangle ChipsNeoSystem {
-    usecase "アカウント作成" as create
-    usecase "機能の追加" as add_feature
     usecase "バックアップ" as backup
+    usecase "アカウント作成" as create
+}
+
+rectangle 管理者操作 {
+    usecase "機能の追加" as add_feature
     usecase "ヘルプデスク" as help_desk
     usecase "不具合の修正" as fix
     usecase "データの復元" as resque

@@ -22,26 +22,37 @@ rectangle ChipsNeoSystem {
     usecase "収支管理" as iae
 }
 
-attendance --> manager :出勤情報
+database データベース as data
 
-manager --> type :シフト種別
+data --> attendance :出勤情報
+attendance --> manager
 
-manager --> charge :担当企業、場所
+manager --> type
+type --> data :シフト種別
 
-manager --> individual :個建情報
+manager --> charge
+charge --> data :担当企業、場所
 
-manager --> crew_manage :クルー情報
+manager --> individual
+individual --> data :個建情報
+
+manager --> crew_manage
+crew_manage --> data :クルー情報
 crew_manage --> crew :アカウント情報
 
-manager --> unit_cost :単価情報
+manager --> unit_cost
+unit_cost --> data :単価情報
 
-manager --> prime :元請請求書情報
+manager --> prime
+data --> prime :元請請求書情報
 prime --> prime_contractor :元請請求書
 
-manager --> crew_shift :クルーシフト情報
+manager --> crew_shift
+crew_shift --> data :クルーシフト情報
 crew_shift --> crew :支払通知書
 crew --> manager :請求書
 
-iae --> manager :収支情報
+data --> iae :収支情報
+iae --> manager
 
 @enduml

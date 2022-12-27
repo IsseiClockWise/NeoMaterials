@@ -11,10 +11,13 @@ actor 顧客 as client
 actor 新規顧客 as new_client
 
 
+rectangle 販売代理店操作 {
+}
+
 rectangle ChipsNeoSystem {
-    usecase "シフト管理者のアカウント作成" as create
     usecase "機能の割当" as feature
-    usecase "トライアル用アカウント" as trial
+    usecase "シフト管理者のアカウント作成" as create
+    usecase "トライアウトのアカウント作成" as trial
 }
 
 sales_agent --> create

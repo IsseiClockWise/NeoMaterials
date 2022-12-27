@@ -141,7 +141,7 @@
         --
         * service_id : int(11) : 顧客ID
         * territory_id : int(11) : 配属先ID
-        * display_order : tinyint(3) : 表示順∂
+        * display_order : tinyint(3) : 表示順
         * is_enabled : tinyint(1) : 表示非表示
     }
 
