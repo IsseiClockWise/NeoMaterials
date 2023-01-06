@@ -64,7 +64,7 @@
         * display_order : int(11) : 表示順
     }
 
-    
+
 
     ' entity "expenses_data (経費)" as expenses_data {
     '     * expenses_id : int(11) : 経費ID(AtInc)

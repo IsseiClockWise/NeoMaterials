@@ -10,7 +10,7 @@ actor シフト管理者 as manager
 actor クルー as crew
 
 rectangle ChipsNeoSystem {
-    usecase "シフトの追加" as input_shift
+    usecase "シフトの追加" as input_shif
     usecase "確定送信" as submit
     usecase "シフトの変更申請" as change
     usecase "毎日の出退勤を入力" as time
