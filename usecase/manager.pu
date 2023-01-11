@@ -15,7 +15,7 @@ rectangle ChipsNeoSystem {
     usecase "シフト種別管理" as type
     usecase "担当管理" as charge
     usecase "個建管理" as individual
-    usecase "クルー管理" as crew_manage
+    usecase "クルー管理" as crew_manag
     usecase "単価管理" as unit_cost
     usecase "元請管理" as prime
     usecase "クルーシフト管理" as crew_shift
