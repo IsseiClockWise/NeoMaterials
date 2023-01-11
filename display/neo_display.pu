@@ -1,40 +1,31 @@
 @startuml 画面遷移
     hide circle
     skinparam linetype ortho
-    left to right direction
-
-    entity "ログイン画面" as login {
-        * ユーザーID
-        * パスワード
-    }
 
     entity "管理画面" as admin {
-        * 出欠情報
-        * 各種設定画面
-        * クルーシフト情報
-        * 請求画面
-    }
-
-    entity "クルーメイン画面" as crew {
-        * シフト提出
-        * シフト修正申請
-        * 出退勤時刻登録
-        * 有給休暇申請
-        * 支払通知書承認
-        * 請求書発行
-        * 日報登録
-        * 過去の出勤日数情報などの実績
-    }
-
-    entity "各種設定" as config {
+        * クルー一覧
+        * クルー申請
+        --
+        トップバー
         * シフト種別設定
         * 元請企業情報設定
         * 自社企業情報設定
         * クルー情報設定
+        * クルーシフト情報
+        * 請求画面
     }
 
     entity "シフト種別設定" as attendance {
-        * シフト種別　種別は限られてるからいらないかもしれない
+        * シフト種別
+        --
+        選択肢があるだけでそれを有効無効で切り替え
+    }
+
+    entity "元請企業一覧" as prime_init {
+        * 一覧表示
+        * 新規作成
+        * 編集
+        * 削除
     }
 
     entity "元請企業情報設定" as prime_conductor {
@@ -59,6 +50,15 @@
         * 電話番号
         * 登録番号
         * 口座情報
+        --
+        編集のみ
+    }
+
+    entity "クルー情報一覧" as crew_init {
+        * 一覧表示
+        * 新規作成
+        * 編集
+        * 削除
     }
 
     entity "クルー情報設定" as crew_info {
@@ -94,15 +94,45 @@
         * その他収支情報
     }
 
-    login --> admin :"管理者"
-    login --> crew :"クルー"
-    admin --> config
+    entity "クルーメイン画面" as crew {
+        * 出退勤時刻登録
+        * 各種申請
+        * 請求書
+        * 実績情報
+    }
+
+    entity "シフト提出画面" as submit {
+        * シフト提出
+        * シフト修正申請
+    }
+
+    entity "各種申請" as application {
+        * 有給休暇申請
+    }
+
+    entity "請求書" as invoice {
+        * 支払通知書承認
+        * 請求書、支払請求書一覧
+    }
+
+    entity "実績情報" as achievements {
+        * 出退勤情報
+        * 労働時間
+        * 配達実績
+    }
+
     admin --> payment
     admin --> shift
     admin --> BOP
-    config --> attendance
-    config --> prime_conductor
-    config --> my_comp
-    config --> crew_info
+    admin --> attendance
+    admin --> prime_init
+    admin --> my_comp
+    admin --> crew_init
+    prime_init --> prime_conductor
+    crew_init --> crew_info
     shift --> payment
+    crew --> submit
+    crew --> application
+    crew --> invoice
+    crew --> achievements
 @enduml
