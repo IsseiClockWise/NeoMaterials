@@ -62,7 +62,6 @@ admin --> "システムからの通知を設定する"
 
 sales_agent --> "販売代理店ページへのログイン" 
 sales_agent --> "TSPアカウント作成・編集・削除"
-sales_agent --> "代理店アカウントのパスワードリセット"
 sales_agent --> "TSPアカウントのパスワードリセット"
 
 sales_agent --> "TSPアカウントのパスワードリセット"
