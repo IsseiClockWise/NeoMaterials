@@ -1,241 +1,277 @@
 @startuml DB_List
-    hide circle
-    skinparam linetype ortho
+  hide circle
+  skinparam linetype ortho
 
-    entity "combo_master (大規模中間テーブル)" as combo_master {
-        * combo_id : int(11) : 組合せID(AtInc)
-        --
-        * user_id : int(11) : 担当者ID
-        * service_id : int(11) : 顧客マスタID
-        * territory_id : int(11) : 担当地域ID
-        * kodate_id : int(11) : 個建ID
-        * unit_price_id : int(11) : 単価管理ID
-        * motouke_price : mediumint(8) : 元請単価
-        * company_price : mediumint(8) : 社内単価
+  package ユーザー関連 <<rectangle>> {
+    entity "AdminUser システム管理者" as admin_users {
+      * id : integer
+      * login : string : ログインID
+      --
+      * password_digest : string : パスワード
+      * name : string : ユーザー名
+      current_log_in_at : datetime : ログイン日時
+      last_log_in_at : datetime : 最後のログイン日時
     }
 
-    entity "attendance_master (出欠テーブル)" as attendance_master {
-        * attendance_id : varchar(8) : 出欠ID
-        --
-        * attendance_status : varchar(16) : 状態(休出欠研)
+    entity "SalesAgent 販売代理店" as sales_agents {
+      * id : integer
+      * login : string : ログインID
+      --
+      * password_digest : string : パスワード
+      * is_initial_password : boolean(true) : 初回ログインかどうか
+      * name : string : ユーザー名
+      current_log_in_at : datetime : ログイン日時
+      last_log_in_at : datetime : 最後のログイン日時
     }
 
-    entity "kodate_master (個建マスタ)" as kodate_master {
-        * kodate_id : int(11) : 個建ID(AtInc)
-        --
-        * kodate_name : varchar(30) : 個建名
+    entity "ServiceProvider 運送管理者" as service_providers {
+      * id : integer
+      * sales_agent : reference : 販売代理店
+      * login : string : ログインID
+      --
+      * password_digest : string : パスワード
+      * is_initial_password : boolean(true) : 初回ログインかどうか
+      * company_name : string : 企業名
+      * representative : string : 代表者名
+      * zipcode : string : 郵便番号
+      address1 : string : 所在地1
+      address2 : string : 所在地2
+      regist_number : string : 登録番号
+      phone : string : 電話番号
+      fax : string : FAX
+      email : string : メールアドレス
+      shift_submission_deadline : integer : シフト提出の締日
+      current_log_in_at : datetime : ログイン日時
+      last_log_in_at : datetime : 最後のログイン日時
     }
 
-    entity "service_master (顧客マスタ)" as service_master {
-        * service_id : int(11) : 顧客マスタID(AtInc)
-        --
-        * service_name : varchar(50) : 顧客名
-        * company_name : varchar(80) : 企業名
+    entity "ServiceManager 運送管理マネージャー" as service_managers {
+      * id : integer
+      * service_providers : reference : 運送管理者
+      * login : string : ログインID
+      --
+      * password : string : パスワード
+      * name : string : ユーザー名
+      email : string : メールアドレス
+      current_log_in_at : datetime : ログイン日時
+      last_log_in_at : datetime : 最後のログイン日時
     }
 
-    entity "territory_master (担当地域マスタ)" as territory_master {
-        * territory_id : int(11) : 担当地域ID(AtInc)
-        --
-        * territory_name : varchar(30) : 担当地域名
+    entity "Crew　クルー" as crews {
+      * id : integer
+      * service_providers : reference : 運送管理者
+      * login : string : ログインID
+      --
+      * password : string : パスワード
+      * name : string : ユーザー名
+      * zipcode : string : 郵便番号
+      address1 : string : 所在地1
+      address2 : string : 所在地2
+      regist_number : string : 登録番号
+      phone : string : 電話番号
+      fax : string : FAX
+      email : string : メールアドレス
+      max_days_off : integereger : 申請可能最大休暇日数
+      current_log_in_at : datetime : ログイン日時
+      last_log_in_at : datetime : 最後のログイン日時
+      * is_deleted : boolean(false) : 退職したかどうか
+    }
+  }
+
+  package 銀行 <<rectangle>> {
+    entity "Bank　銀行" as banks {
+      * id : integer
+      * billable : references
+      --
+      * name : string : 銀行名
+      * branch_number : string : 支店コード
+      * branch_name : string : 支店名
+      * account_type : integereger : 口座種別
+      * account_number : string : 口座番号
+      * account_name : string : 口座名
+    }
+  }
+
+  package 元請企業関連 <<rectangle>> {
+    entity "Contractor　元請企業" as contractors {
+      * id : integer
+      * service_providers : reference : 運送管理者
+      --
+      * name : string : 元請企業名
+      * display_name : string : 表示する企業名
+      representative : string : 代表者名
+      zipcode : string : 郵便番号
+      address1 : string : 所在地1
+      address2 : string : 所在地2
+      regist_number : string : 登録番号
+      phone : string : 電話番号
+      email : string : メールアドレス
     }
 
-    entity "unit_price_master (単価管理)" as unit_price_master {
-        * unit_price_id : int(11) : 単価管理ID(AtInc)
-        --
-        * st_combo_id : int(11) : 組合せ(日当)ID
-        * sk_combo_id : int(11) : 組合せ(個建)ID
-        * begin_yyyymm : char(6) : 開始日時
-        * motouke_price : mediumint(8) : 元請単価
-        * company_price : mediumint(8) : 社内単価
+    entity "WareHouse　倉庫" as ware_houses {
+      * id : integer
+      * contractors : reference : 元請企業
+      --
+      * name : string : 倉庫名
+      * wage_type : integereger : 給与種別
+      * in_wage : float : 社内単価
+      * ex_wage : float : 元請単価
     }
 
-    entity "user_master (担当者マスタ)" as user_master {
-        * user_id : int(11) : 担当者ID(AtInc)
-        --
-        * login_name : varchar(20) : ログイン名
-        * user_name : varchar(20) : 担当者名
-        * passwd_hash : varchar(255) : ハッシュ
-        * passwd_encrypt : char(24) : 暗号化
-        * regi_num : varchar(14) : 登録番号
-        * is_admin : tinyint(1) : 管理者
-        * is_enabled : tinyint(1) : 表示非表示
-        * created_at : datetime : 作成日時
-        * update_at : timestamp : 更新日時
-        * display_order : int(11) : 表示順
+    entity "Package　個建" as packages {
+      * id : integer
+      * contractors : reference : 元請企業
+      --
+      * type_name : string : 個建名
+      * in_unit_price : float : 社内単価
+      * ex_unit_price : float : 元請単価
     }
 
+    entity "Assignment　CrewとWareHouseを関連付けるテーブル" as assignments {
+      * id : integer
+      * crew_id : integereger : クルーID
+      * warehouse_id : integer : 倉庫ID
+      --
+      * is_primary : boolean : メインの担当かどうかを表すフラグ
+    }
+
+    entity "DeliveryArea　配達エリア" as delivery_areas {
+      * id : integer
+      * contractors : reference : 元請企業
+      --
+      name : string : コース名
+    }
+  }
+
+  package 請求書関連 <<rectangle>> {
+    entity "Invoice　請求書" as invoices {
+      * id : integer
+      * invoice_issuable : references
+      * issue_date : date : 発行日
+      due_date : date : 支払期限
+      * invoice_number : string : 請求書番号
+      * subject_yearmonth : date : 請求書の対象年月
+      --
+      remarks : text : 備考
+      * is_tax_included : boolean(false) : 税込税抜
+      subject : string : 件名
+      amount : float : 合計請求金額
+    }
+
+    entity "BillingInfo　請求書宛先" as billing_infos {
+      * id : integer
+      * invoice : references : 請求書
+      --
+      company_name : string : 会社名
+      contact_person : string : 担当者名
+      zipcode : string : 郵便番号
+      address1 : string : 住所1
+      address2 : string : 住所2
+    }
+
+    entity "SenderInfo　請求書送り主" as sender_infos {
+      * id : integer
+      * invoice : references : 請求書
+      --
+      company_name : string : 企業名
+      zipcode : string : 郵便番号
+      address1 : string : 所在地1
+      address2 : string : 所在地2
+      phone : string : 電話番号
+      fax : string : FAX
+      regist_number : string : 登録番号
+      contact_person : string : 担当者名
+    }
+
+    entity "BillingItem　品目" as billing_items {
+      * id : integer
+      * invoice : references : 請求書
+      --
+      name : string : 品目名
+      quantity : float : 数量
+      unit : string : 単位
+      unit_price : float : 単価
+      tax_rate : float : 税率
+    }
+  }
+
+  package 支払通知関連 <<rectangle>> {
+    entity "PaymentNotification　支払ステータス" as payment_notifications {
+      * id : integer
+      * crew : references : クルー
+      yearmonth : date : 支払対象年月
+      --
+      * status : integer : 支払状況
+      notification_num : string : 支払通知書番号
+    }
+  }
+
+  package シフト管理関連 <<rectangle>> {
+    entity "ShiftPreference　シフト希望" as shift_preferences {
+      * id : integer
+      * crew : references : クルー
+      * sdate : date : シフトの日付
+      --
+      * shift_type : integer : 稼働するかしないか
+      * is_submitted : boolean(false) : 提出済か
+      remarks : text : 備考
+    }
+
+    entity "Shift　シフト" as shifts {
+      * id : integer
+      * crew : references : クルー
+      * sdate : date : シフトの日付
+      * is_fixed : boolean(false) : 確定済か
+      ware_house : references : 倉庫名
+      delivery_area : references : 配達エリア
+      --
+      remarks : text : 備考
+      * is_training : boolean(false) : 研修かどうか
+    }
+
+    entity "DayOff　休暇" as day_offs {
+      * id : integer
+      * crew : references : クルー
+      * sdate : date : 休暇日
+      * is_fixed : boolean(false) : 確定済か
+      --
+      remarks : text : 備考
+    }
+  }
+
+  package 出退勤関連 <<rectangle>> {
+    entity "Attendance　出退勤" as attendances {
+      * id : integer
+      * crew : references : クルー
+      * ware_house : references : 倉庫名
+      shift : references : シフト
+      --
+      * checkin_time : datetime : 出勤時刻
+      * checkout_time : datetime : 退勤時刻
+      remarks : text : 備考
+    }
+  }
+
+  sales_agents ||--|{ service_providers
+  service_providers ||--|{ service_managers
+  service_providers ||--|{ crews
+  service_providers ||-l-|{ contractors
+  contractors ||--|{ ware_houses
+  contractors ||--|{ packages
+  contractors ||--|{ delivery_areas
+  invoices ||--|| billing_infos
+  invoices ||--|| sender_infos
+  invoices ||--|{ billing_items
+  crews ||--|{ payment_notifications
+  crews ||--|{ shift_preferences
+  crews ||--|{ shifts
+  ware_houses ||--|{ shifts
+  delivery_areas ||--|{ shifts
+  crews ||--|{ day_offs
+  crews ||--|{ payment_notifications
+  crews ||--|{ attendances
+  ware_houses ||-l-|{ attendances
+  shifts ||--|| attendances
 
 
-    ' entity "expenses_data (経費)" as expenses_data {
-    '     * expenses_id : int(11) : 経費ID(AtInc)
-    '     --
-    '     * is_fixed : tinyint(1) : 処理Flg
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_name : varchar(20) : 該当者
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * expenses_name : varchar(32) : 経費名
-    '     * unit_price : mediumint(8) : 単価
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "invoice_data (元請請求書追加項目)" as invoice_data {
-    '     * invoice_id : int(11) : 請求書ID(AtInc)
-    '     --
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * select_service : char(3) : 元請企業ID
-    '     * datePicker1 : char(7) : 該当年月
-    '     * charge_name : char(20) : 担当者名
-    '     * deadline : char(10) : 締切日
-    '     * invoice_day : char(10) : 請求日
-    '     * reference_column : text : 備考欄
-    ' }
-
-    ' entity "motouke_expenses_data (元請請求経費)" as motouke_expenses_data {
-    '     * expenses_id : int(11) : 元請請求経費ID(AtInc)
-    '     --
-    '     * is_fixed : tinyint(1) : 処理Flg
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_company : varchar(80) : 該当企業
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * expenses_name : varchar(32) : 経費名
-    '     * unit_price : mediumint(8) : 単価
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "motouke_payment_add_data (元請請求追加明細)" as motouke_payment_add_data {
-    '     * payment_add_id : int(11) : 元請請求追加明細ID(AtInc)
-    '     --
-    '     * is_fixed : tinyint(1) : 処理Flg
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_name : varchar(80) : 該当企業
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * payment_add_name : varchar(32) : 追加品目
-    '     * unit_add_price : mediumint(8) : 単価
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "operation_history (操作履歴)" as operation_history {
-    '     * history_id : int(11) : 操作履歴ID(AtInc)
-    '     --
-    '     * from_name : varchar(20) : ログイン名
-    '     * target_name : varchar(20) : 処理者
-    '     * target_yyyymm : char(6) : 処理対象年月
-    '     * operation_detail : varchar(10) : 処理詳細
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "payment_add_data (追加明細)" as payment_add_data {
-    '     * payment_add_id : int(11) : 追加明細ID(AtInc)
-    '     --
-    '     * is_fixed : tinyint(1) : 処理Flg
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_name : varchar(20) : 該当者
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * payment_add_name : varchar(32) : 追加品目
-    '     * unit_add_price : mediumint(8) : 単価
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "payment_data (支払明細)" as payment_data {
-    '     * payment_id : int(11) : 支払明細ID(AtInc)
-    '     --
-    '     * is_fixed : tinyint(1) : 処理Flg
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_name : varchar(20) : 該当者
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * item : varchar(32) : 品目
-    '     * quantity : smallint(5) : 数量
-    '     * unit : varchar(5) : 単位
-    '     * unit_price : mediumint(8) : 単価
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "payment_detail (支払詳細)" as payment_detail {
-    '     * target_id : int(11) : 支払詳細ID(AtInc)
-    '     --
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * login_name : varchar(20) : 担当者名
-    '     * assign_id : int(11) : 手配ID
-    '     * kodate_combo_id : int(11) : 個建組合せID
-    '     * quantity : smallint(5) : 数量
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "payment_invoice (支払通知書追加項目)" as payment_invoice {
-    '     * invoice_id : int(11) : 請求書ID(AtInc)
-    '     --
-    '     * is_deleted : tinyint(1) : 削除 Flg
-    '     * target_name : varchar(20) : 該当名
-    '     * target_yyyymm : char(6) : 該当年月
-    '     * payment_day : char(10) : 支払日
-    '     * reference_column : text : 備考欄
-    ' }
-
-    ' entity "ser_kodate_combo (顧客(個建)組合せ)" as ser_kodate_combo {
-    '     * kodate_combo_id : int(11) : 顧客(個建)組合せID(AtInc)
-    '     --
-    '     * service_id : int(11) : 顧客ID
-    '     * territory_id : int(11) : 配属先ID
-    '     * kodate_id : int(11) : 個建ID
-    '     * display_order : tinyint(3) : 表示順
-    '     * is_enabled : tinyint(1) : 表示非表示
-    ' }
-
-    ' entity "ser_ter_combo (顧客組合せ)" as ser_ter_combo {
-    '     * combo_id : int(11) : 顧客組合せID(AtInc)
-    '     --
-    '     * service_id : int(11) : 顧客ID
-    '     * territory_id : int(11) : 配属先ID
-    '     * display_order : tinyint(3) : 表示順∂
-    '     * is_enabled : tinyint(1) : 表示非表示
-    ' }
-
-    ' entity "shared_links (共有リンク)" as shared_links {
-    '     * id : int(11) : 共有リンクID(AtInc)
-    '     --
-    '     * redirect_path : varchar(256) : リダイレクトパス
-    '     * token : varchar(256) : トークン
-    ' }
-
-    ' entity "user_assign (配属先)" as user_assign {
-    '     * assign_id : int(11) : 配属先ID(AtInc)
-    '     --
-    '     * login_name : varchar(20) : ログイン名
-    '     * combo_id : int(11) : 組合せID
-    '     * service_id : int(11) : 顧客ID
-    '     * territory_id : int(11) : 担当地域ID
-    '     * priority : tinyint(3) : 優先度
-    '     * is_kodate : tinyint(1) : 個建フラグ
-    '     * is_enabled : tinyint(1) : 表示非表示
-    '     * created_at : datetime : 作成日時
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "work_schedule (勤怠)" as work_schedule {
-    '     * schedule_id : int(11) : 勤怠ID(AtInc)
-    '     --
-    '     * login_name : varchar(20) : ログイン名
-    '     * assign_id : int(11) : 手配ID
-    '     * service_id : int(11) : 顧客ID
-    '     * work_date : date : 勤務日付
-    '     * attendance_status : char(1) : 出欠
-    '     * attendance_time : time : 出勤時間
-    '     * leaving_time : time : 退勤時間
-    '     * memo : varchar(500) : メモ
-    '     * kodate_number : smallint(4) : 個建No
-    '     * is_fixed : tinyint(1) : 確定
-    '     * update_at : timestamp : 更新日時
-    ' }
-
-    ' entity "work_schedule_kodate (勤怠(個建))" as work_schedule_kodate {
-    '     * schedule_kodate_id : int(11) : 経費ID(AtInc)
-    '     --
-    '     * login_name : varchar(20) : ログイン名
-    '     * assign_id : int(11) : 手配ID
-    '     * kodate_combo_id : int(11) : 個建組合せID
-    '     * work_date : date : 勤務日付
-    '     * kodate_number : smallint(4) : 個建No
-    '     * is_fixed : tinyint(1) : 確定
-    '     * update_at : timestamp : 更新日時
-    ' }
 @enduml
