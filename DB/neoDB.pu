@@ -33,7 +33,7 @@
       * is_initial_password : boolean(true) : 初回ログインかどうか
       * company_name : string : 企業名
       * representative : string : 代表者名
-      * zipcode : string : 郵便番号
+      zipcode : string : 郵便番号
       address1 : string : 所在地1
       address2 : string : 所在地2
       regist_number : string : 登録番号
@@ -64,7 +64,7 @@
       --
       * password : string : パスワード
       * name : string : ユーザー名
-      * zipcode : string : 郵便番号
+      zipcode : string : 郵便番号
       address1 : string : 所在地1
       address2 : string : 所在地2
       regist_number : string : 登録番号
@@ -113,6 +113,12 @@
       * contractors : reference : 元請企業
       --
       * name : string : 倉庫名
+    }
+
+    entity "Wage　単価" as wages {
+      * id : integer
+      * warehouse : reference : 倉庫
+      --
       * wage_type : integereger : 給与種別
       * in_wage : float : 社内単価
       * ex_wage : float : 元請単価
@@ -123,8 +129,15 @@
       * contractors : reference : 元請企業
       --
       * type_name : string : 個建名
-      * in_unit_price : float : 社内単価
-      * ex_unit_price : float : 元請単価
+    }
+
+    entity "PackageUnitPrice　個建単価" as package_unit_prices {
+      * id : integer
+      * packages : reference : 個建
+      --
+      * wage_type : integereger : 給与種別
+      * in_wage : float : 社内単価
+      * ex_wage : float : 元請単価
     }
 
     entity "Assignment　CrewとWareHouseを関連付けるテーブル" as assignments {
@@ -195,6 +208,16 @@
     }
   }
 
+  package "PDF共有関連" <<rectangle>> {
+    entity "SharedLink PDF共有" as shared_links {
+      * id : integer
+      * sharable : references : 共有
+      * token : string : トークン
+      --
+      * is_public : boolean(true) : 公開するかしないか
+    }
+  }
+
   package 支払通知関連 <<rectangle>> {
     entity "PaymentNotification　支払ステータス" as payment_notifications {
       * id : integer
@@ -223,10 +246,15 @@
       * sdate : date : シフトの日付
       * is_fixed : boolean(false) : 確定済か
       ware_house : references : 倉庫名
-      delivery_area : references : 配達エリア
       --
       remarks : text : 備考
-      * is_training : boolean(false) : 研修かどうか
+    }
+
+    entity "ShiftDeriveryArea　シフトと配達地域" as shifts_delivery_areas {
+      * id : integer
+      * shift_id : integer : シフトテーブルのID
+      * delivery_area_id : integer : 配達地域テーブルのID
+      --
     }
 
     entity "DayOff　休暇" as day_offs {
@@ -236,6 +264,14 @@
       * is_fixed : boolean(false) : 確定済か
       --
       remarks : text : 備考
+    }
+
+    entity "DeliveryResult　配達実績" as delivery_results {
+      * id : integer
+      * tdate : date : 配達日
+      * package_type : references : 個建種類
+      --
+      amount : integer : 配達個数
     }
   }
 
@@ -250,6 +286,14 @@
       * checkout_time : datetime : 退勤時刻
       remarks : text : 備考
     }
+
+    entity "DeliveryActualResult　配達参考値" as delivery_actual_results {
+      * id : integer
+      * attendace : references : 出欠
+      * package_type : references : 個建種類
+      --
+      amount : integer : 配達個数
+    }
   }
 
   sales_agents ||--|{ service_providers
@@ -262,16 +306,25 @@
   invoices ||--|| billing_infos
   invoices ||--|| sender_infos
   invoices ||--|{ billing_items
-  crews ||--|{ payment_notifications
-  crews ||--|{ shift_preferences
-  crews ||--|{ shifts
+  crews ||-d-|{ shift_preferences
+  crews ||-d-|{ shifts
   ware_houses ||--|{ shifts
   delivery_areas ||--|{ shifts
-  crews ||--|{ day_offs
-  crews ||--|{ payment_notifications
-  crews ||--|{ attendances
+  crews ||-d-|{ day_offs
+  crews ||-d-|{ payment_notifications
+  crews ||-d-|{ attendances
   ware_houses ||-l-|{ attendances
   shifts ||--|| attendances
+  attendances ||--|{ delivery_actual_results
+  shifts ||-u-|| shifts_delivery_areas
+  delivery_areas ||--|| shifts_delivery_areas
+  crews ||--|| assignments
+  ware_houses ||-u-|| assignments
+  ware_houses ||--|{ wages
+  packages ||--|{ package_unit_prices
+
+  payment_notifications ||..|| invoices
+  invoices ||.r.|{ contractors
 
 
 @enduml
